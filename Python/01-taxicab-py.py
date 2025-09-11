@@ -16,35 +16,66 @@ def move(x, y, dir, length):
         case 'S': return (x, y - length)
         case 'W': return (x - length, y)
 
-x = 0
-y = 0
-
-dir = 'N'
-
 # input = 'R2, L3'
 # input = 'R2, R2, R2'
 # input = 'R5, L5, R5, R3'
-input = 'R8, R4, R4, R8'
-# input = 'R3, L5, R2, L1, L2, R5, L2, R2, L2, L2, L1, R2, L2, R4, R4, R1, L2, L3, R3, L1, R2, L2, L4, R4, R5, L3, R3, L3, L3, R4, R5, L3, R3, L5, L1, L2, R2, L1, R3, R1, L1, R187, L1, R2, R47, L5, L1, L2, R4, R3, L3, R3, R4, R1, R3, L1, L4, L1, R2, L1, R4, R5, L1, R77, L5, L4, R3, L2, R4, R5, R5, L2, L2, R2, R5, L2, R194, R5, L2, R4, L5, L4, L2, R5, L3, L2, L5, R5, R2, L3, R3, R1, L4, R2, L1, R5, L1, R5, L1, L1, R3, L1, R5, R2, R5, R5, L4, L5, L5, L5, R3, L2, L5, L4, R3, R1, R1, R4, L2, L4, R5, R5, R4, L2, L2, R5, R5, L5, L2, R4, R4, L4, R1, L3, R1, L1, L1, L1, L4, R5, R4, L4, L4, R5, R3, L2, L2, R3, R1, R4, L3, R1, L4, R3, L3, L2, R2, R2, R2, L1, L4, R3, R2, R2, L3, R2, L3, L2, R4, L2, R3, L4, R5, R4, R1, R5, R3'
+# input = 'R8, R4, R4, R8'
+input = 'R3, L5, R2, L1, L2, R5, L2, R2, L2, L2, L1, R2, L2, R4, R4, R1, L2, L3, R3, L1, R2, L2, L4, R4, R5, L3, R3, L3, L3, R4, R5, L3, R3, L5, L1, L2, R2, L1, R3, R1, L1, R187, L1, R2, R47, L5, L1, L2, R4, R3, L3, R3, R4, R1, R3, L1, L4, L1, R2, L1, R4, R5, L1, R77, L5, L4, R3, L2, R4, R5, R5, L2, L2, R2, R5, L2, R194, R5, L2, R4, L5, L4, L2, R5, L3, L2, L5, R5, R2, L3, R3, R1, L4, R2, L1, R5, L1, R5, L1, L1, R3, L1, R5, R2, R5, R5, L4, L5, L5, L5, R3, L2, L5, L4, R3, R1, R1, R4, L2, L4, R5, R5, R4, L2, L2, R5, R5, L5, L2, R4, R4, L4, R1, L3, R1, L1, L1, L1, L4, R5, R4, L4, L4, R5, R3, L2, L2, R3, R1, R4, L3, R1, L4, R3, L3, L2, R2, R2, R2, L1, L4, R3, R2, R2, L3, R2, L3, L2, R4, L2, R3, L4, R5, R4, R1, R5, R3'
 steps = input.split(', ')
 
-visited = {(0, 0)}
+def find_result1(steps):
+    x = 0
+    y = 0
+    dir = 'N'
 
-for step in steps:
-    turn = step[0]
-    length = int(step[1:])
+    for step in steps:
+        turn = step[0]
+        length = int(step[1:])
 
-    dir = turn_dir(dir, turn)
+        dir = turn_dir(dir, turn)
 
-    x, y = move(x, y, dir, length)
+        x, y = move(x, y, dir, length)
 
-    if (x, y) in visited:
-        break
+    return x, y
 
-    visited.add((x, y))
+def find_result2(steps):
+    x = 0
+    y = 0
+    dir = 'N'
+    visited = {(0, 0)}
 
-print(f'Final position: {x}, {y}')
+    for step in steps:
+        turn = step[0]
+        length = int(step[1:])
 
+        dir = turn_dir(dir, turn)
+
+        nx, ny = move(x, y, dir, length)
+
+        def create_range(a, b):
+            if a == b: return [a]
+            if b > a: return range(a + 1, b + 1)
+            else: return range(a - 1, b - 1, -1)
+
+        for i in create_range(x, nx):
+            for j in create_range(y, ny):
+                print(f"Checking position {i},{j}")
+                if (i, j) in visited:
+                    return i, j
+                visited.add((i, j))
+
+        x = nx
+        y = ny
+
+    return None
+
+x, y = find_result1(steps)
+print(f'1 Final position: {x}, {y}')
 result = abs(x) + abs(y)
+print(f'1 Final distance: {result}')
 
-print(f'Final distance: {result}')
+
+x, y = find_result2(steps)
+print(f'2 Final position: {x}, {y}')
+result = abs(x) + abs(y)
+print(f'2 Final distance: {result}')
